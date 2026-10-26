@@ -1,5 +1,7 @@
 package com.example.tenantmanagementsystem
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +26,22 @@ class ViewTenantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.newTenantGroup.visibility = View.GONE
+        @Suppress("DEPRECATION")
+        val newTenant = arguments?.getSerializable("newTenant") as? Tenant
+
+        if (newTenant == null) {
+            binding.newTenantGroup.visibility = View.GONE
+        } else {
+            binding.tenant = newTenant
+            binding.newTenantGroup.visibility = View.VISIBLE
+        }
+
+        binding.callButton.setOnClickListener {
+            if (newTenant != null) {
+                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${newTenant.phone}"))
+                startActivity(intent)
+            }
+        }
 
         val tenants = TenantRepository.tenants
 
